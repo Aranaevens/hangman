@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- CSS -->
+    <title>Hello, world!</title>
+	<style>
+		*{
+			box-sizing: border-box;
+		}
+		#wrapper{
+			width: 100%;
+			display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-evenly;
+        }
+        #mistakes{
+            position: absolute;
+            top: 90%;
+            width: 100%;
+			display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+		}
+		.boite{
+			width: 100px;
+			min-height: 100px;
+			border: 1px solid grey;
+			font-size: 5em;
+			line-height: 100px;
+			text-align: center;
+        }
+        #pendu-base{
+            position: absolute;
+            top: 55%;
+            left: calc(40% - 30px);
+            width: 75px;
+            height: 5px;
+            background-color: black;
+            display: none;
+        }
+        #pendu-barre-verticale{
+            position: absolute;
+            top: calc(55% - 100px);
+            left: 40%;
+            width: 5px;
+            height: 100px;
+            background-color: black;
+            display: none;
+        }
+        #pendu-barre-horizontale{
+            position: absolute;
+            top: calc(55% - 100px);
+            left: 40%;
+            width: 75px;
+            height: 5px;
+            background-color: black;
+            display: none;
+        }
+        #pendu-corde{
+            position: absolute;
+            top: calc(55% - 100px);
+            left: calc(40% + 75px);
+            width: 5px;
+            height: 20px;
+            background-color: black;
+            display: none;
+        }
+        #pendu-tete{
+            position: absolute;
+            top: calc(55% - 80px);
+            left: calc(40% + 67.5px);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 5px solid black;
+            display: none;
+        }
+        #pendu-corps{
+            position: absolute;
+            top: calc(55% - 60px);
+            left: calc(40% + 75px);
+            width: 5px;
+            height: 30px;
+            background-color: black;
+            display: none;
+        }
+        #pendu-bras{
+            position: absolute;
+            top: calc(55% - 52.5px);
+            left: calc(40% + 62.5px);
+            width: 30px;
+            height: 5px;
+            background-color: black;
+            display: none;
+        }
+        #pendu-jambe-gauche{
+            position: absolute;
+            top: calc(55% - 35px);
+            left: calc(40% + 67px);
+            width: 5px;
+            height: 22px;
+            transform: rotate(45deg);
+            background-color: black;
+            display: none;
+        }
+        #pendu-jambe-droite{
+            position: absolute;
+            top: calc(55% - 35px);
+            left: calc(40% + 83px);
+            width: 5px;
+            height: 22px;
+            transform: rotate(-45deg);
+            background-color: black;
+            display: none;
+        }
+        #win{
+            font-size: 10vw;
+            width: 100vw;
+            height: 100vh;
+            text-align: center;
+            background-color: white;
+            z-index: 2;
+            display:none;
+        }
+        .color-change{
+            color: red;
+        }
+
+        #lose{
+            font-size: 10vw;
+            width: 100vw;
+            height: 30vh;
+            text-align: center;
+            background-color: white;
+            z-index: 2;
+            display:none;
+        }
+        #losesmiley{
+            font-size: 30vh;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: rotate(90deg);
+            z-index: 3;
+            display: none;
+        }
+		
+	</style>
+  </head>
+  <body>
+<div id="win">GAGNE !<br />
+    <img src="https://images-na.ssl-images-amazon.com/images/I/51IY4ohvfUL._SX466_.jpg" />
+</div>
+<div id="lose">PERDU !</div>
+<div id="losesmiley">: (</div>
+<div id="wrapper">
+</div>
+<div id="pendu-img">
+    <span id="pendu-base"></span>
+    <span id="pendu-barre-verticale"></span>
+    <span id="pendu-barre-horizontale"></span>
+    <span id="pendu-corde"></span>
+    <span id="pendu-tete"></span>
+    <span id="pendu-corps"></span>
+    <span id="pendu-bras"></span>
+    <span id="pendu-jambe-droite"></span>
+    <span id="pendu-jambe-gauche"></span>
+</div>
+<div id="mistakes">
+
+</div>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+	  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+	  crossorigin="anonymous"></script>
+	<script>
+        function RemoveAccents(strAccents) {
+            var strAccents = strAccents.split('');
+            var strAccentsOut = new Array();
+            var strAccentsLen = strAccents.length;
+            var accents = 'ÀÁÂÃÄÅàáâãäåÒÓÔÕÕÖØòóôõöøÈÉÊËèéêëðÇçÐÌÍÎÏìíîïÙÚÛÜùúûüÑñŠšŸÿýŽž';
+            var accentsOut = "AAAAAAaaaaaaOOOOOOOooooooEEEEeeeeeCcDIIIIiiiiUUUUuuuuNnSsYyyZz";
+            for (var y = 0; y < strAccentsLen; y++) {
+                if (accents.indexOf(strAccents[y]) != -1) {
+                    strAccentsOut[y] = accentsOut.substr(accents.indexOf(strAccents[y]), 1);
+                } else
+                    strAccentsOut[y] = strAccents[y];
+            }
+            strAccentsOut = strAccentsOut.join('');
+            return strAccentsOut;
+        }
+
+
+        function dispVisible(arr){
+            arr.forEach(function(element, index){
+				if (index == 0)
+					{
+						$("#wrapper").html("<div class=\"letter\">"+arr[index]+"</div>")
+					}
+                else
+                {
+                    $("#wrapper").append("<div class=\"letter\">"+arr[index]+"</div>")
+                }
+			})
+        }
+
+        function dispMistakes(arr){
+            arr.forEach(function(element, index){
+				if (index == 0)
+					{
+						$("#mistakes").html("<div class=\"letter\">"+arr[index]+"</div>")
+					}
+                else
+                {
+                    $("#mistakes").append("<div class=\"letter\">"+arr[index]+"</div>")
+                }
+			})
+        }
+
+        // Checks the win with the fact there's still an underscore
+        // There is no word with an underscore
+        function checkWin(arr){
+            let flag = true;
+            arr.forEach(function(element, index){
+                if (arr[index] == "_")
+                {
+                    flag = false;
+                }
+            })
+            return flag;
+        }
+
+        // Different arrays for the words.
+        let mot = "Analphabète";
+        // Mot is the one to be compared since it doesn't have special chars.
+        let arrMot = Array.from(RemoveAccents(mot));
+        // MotMagique is the true word with all its specificities.
+        let arrMotMagique = Array.from(mot);
+        // Visible is the array I'm displaying multiple times.
+        let arrVisible = new Array(arrMotMagique.length);
+
+        // Number of mistakes handling, max would ultimately be imported.
+        let nbMistakes = 0;
+        let maxMistakes = 9;
+        let arrMistakes = new Array();
+        let form =
+            {
+                0 : "pendu-base",
+                1 : "pendu-barre-verticale",
+                2 : "pendu-barre-horizontale",
+                3 : "pendu-corde",
+                4 : "pendu-tete",
+                5 : "pendu-corps",
+                6 : "pendu-bras",
+                7 : "pendu-jambe-droite",
+                8 : "pendu-jambe-gauche"
+            }
+
+        // Initialize the visible array with underscore to be replaced.
+        for(let j = 0; j < arrMotMagique.length; j++)
+        {
+            arrVisible[j] = "_";
+        }
+
+        // On ready, display our underscord intialized visible array.
+		$(document).ready(function(){
+			dispVisible(arrVisible);
+        })
+        
+        // Keypress event handling.
+		$("html").keypress(function(e){
+            let key = e.keyCode;
+            let flag = true; // Become false on right keypress
+            // Comparing to the array without special chars
+			arrMot.forEach(function(element, index){
+				if (String.fromCharCode(key) == element.toLowerCase() || String.fromCharCode(key) == element.toUpperCase())
+				{
+					arrVisible[index] = arrMotMagique[index];
+                    dispVisible(arrVisible);
+                    flag = false;
+                }
+            })
+            // If the flag is still true after the check, it's a mistake
+            if (flag == true)
+            {
+                arrMistakes[nbMistakes] = String.fromCharCode(key);
+                let todisp = form[nbMistakes];
+                console.log(todisp)
+                $("#" + todisp).css("display", "block");
+                nbMistakes++;
+                dispMistakes(arrMistakes);
+                if (nbMistakes >= maxMistakes)
+                {
+                    $("html").unbind('keypress');
+                    $("#mistakes").css("color", "red");
+                    setTimeout(function(){
+                        $('#pendu-img').hide();
+                        $('#mistakes').hide()
+                        $('#wrapper').hide()
+                        $('#lose').slideDown();
+                        $('#losesmiley').show();
+                    }, 2000)
+                        
+                }
+            }
+            // Put it back to default true is there was a right keypress
+            else
+            {
+                flag = true;
+            }
+            if (checkWin(arrVisible) == true)
+            {
+                $("html").unbind("keypress");
+                $('#pendu-img').hide();
+                $('#mistakes').hide();
+                $('#win').slideDown();
+                var nb = 0;
+                setInterval(function(nb) {
+                    $('#win').toggleClass("color-change");
+                }, 200)
+            }
+		})
+		
+		
+		
+	</script>
+  </body>
+</html>
